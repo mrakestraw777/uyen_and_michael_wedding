@@ -1,4 +1,16 @@
 body{
-    background-image: url(/Wedding\ Save\ the\ Date\ Invitation\ Card\ \(1\).png);
     width: 100%;
+    height: 100%;
+    margin: 0;
+    /* background-image: url(/Wedding\ Save\ the\ Date\ Invitation\ Card\ \(1\).png); */
+    /* background-size:     cover;                 */
+    /* background-repeat:   no-repeat;               */
+}
+
+#main_img{
+    width: 100px;
+    height: 100px;
+    background-image: url(/Wedding\ Save\ the\ Date\ Invitation\ Card\ \(1\).png);
+    background-size:     contain;                      /* <------ */
+    background-repeat:   no-repeat;              
 }

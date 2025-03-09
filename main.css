@@ -12,6 +12,8 @@ html{
 }
 body{
     display: flex;
+    max-width: 390px;
+    max-height: 900px;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -37,6 +39,22 @@ div a{
     font-size: 3em;
     text-decoration: none;
     font-family: Pinyon
+    
+
+}
+
+#rsvp{
+    background-image: url(bubu_dudu_rsvp.png);
+    background-size: 100% 95%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#rsvp a{
+    transform: translate(45px,45px);
+    display: block;
+    height: 100%;
+    width: 100%;
 
 }
 

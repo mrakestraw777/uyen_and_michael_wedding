@@ -37,10 +37,12 @@ div{
 
 h1{
     font-size: 3em;
-    text-decoration: none;
     font-family: Pinyon;
     font-weight: 100;
-    color: #3f987a;
+    color: black;
+    /* text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; */
+
+
     
 
 }
@@ -52,12 +54,14 @@ h1{
     background-position: center;
 }
 
-#anchor_rsvp{
-    transform: translate(45px,45px);
-    display: block;
-    height: 100%;
-    width: 100%;
+#rsvp h1{
+    position: relative;
+    transform: translate(-85px, -55px);
+}
 
+#photo h1{
+    position: relative;
+    transform: translate(-119px, -94px);
 }
 
 #main_image{

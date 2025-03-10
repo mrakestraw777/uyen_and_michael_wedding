@@ -35,10 +35,12 @@ div{
     align-items: center;
 }
 
-div a{
+h1{
     font-size: 3em;
     text-decoration: none;
-    font-family: Pinyon
+    font-family: Pinyon;
+    font-weight: 100;
+    color: #3f987a;
     
 
 }
@@ -50,7 +52,7 @@ div a{
     background-position: center;
 }
 
-#rsvp a{
+#anchor_rsvp{
     transform: translate(45px,45px);
     display: block;
     height: 100%;
@@ -67,6 +69,9 @@ div a{
     background-image: url(bubu_dudu_married.jpeg);
 }
 
-#overlay_test{
-    background-image: url(bubu_dudu_married.jpeg);
+#photo{
+    background-image: url(dudu_bubu_photo_background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }

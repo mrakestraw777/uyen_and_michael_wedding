@@ -5,9 +5,7 @@
     font-style: normal;
 
 }
-html{
-    
-}
+
 html, body{
     height: 100%;
     width: 100%;
@@ -16,22 +14,19 @@ html, body{
 }
 body{
     display: flex;
-    /* max-width: 390px;
-    max-height: 900px; */
-    
 
     flex-direction: column;
     justify-content: space-evenly;
-    /* background-image: url(/Wedding\ Save\ the\ Date\ Invitation\ Card\ \(1\).png); */
-    /* background-size:     cover;                 */
-    /* background-repeat:   no-repeat;               */
+    align-items: center;
 }
 
 div{
     margin: 0 10px 0 10px;
-    max-width: 100%;
+    max-width: 500px;
+    width: 95%;
     height: 30%;
     border: 1px solid black;
+    border-radius: 15px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -91,4 +86,5 @@ h1{
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #fedad8;
 }

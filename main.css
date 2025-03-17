@@ -10,11 +10,12 @@ html, body{
     height: 100%;
     width: 100%;
     margin: 0;
+    /* background-color: #bee1c5; */
     
 }
 body{
     display: flex;
-
+    background-color: #ebffef;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
@@ -50,6 +51,8 @@ h1{
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+    /* background-color: #fedad8; */
+    background-color: #fffeeb;
 }
 
 #rsvp{

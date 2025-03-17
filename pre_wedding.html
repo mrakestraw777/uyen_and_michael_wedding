@@ -44,27 +44,94 @@
   #next-button {
     right: 5px;
   }
+
+  #go_back{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    /* z-index: -1; */
+  }
+
+    .fullscreen {
+        /* position: fixed; */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    .fullscreen #slideshow-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+  
+
+    #go_back.fullscreen  {
+      display: none;
+    }
+
+    #slideshow-container.fullscreen{
+      margin: 0;
+      padding: 5px;
+    }
+  
 </style>
 </head>
 <body>
+  <a id="go_back" href="photos.html">← GO BACK</a>
 
 <div id="slideshow-container">
-  <img id="slideshow-image" src="" alt="Slideshow Image">
+  <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
   <button id="prev-button" class="slideshow-button">&lt;</button>
   <button id="next-button" class="slideshow-button">&gt;</button>
 </div>
 
 <script>
   const imagePaths = [
-    "pre_wedding_photos/NVI03503.jpg",
-    "pre_wedding_photos/NVI03507.jpg",
-    "pre_wedding_photos/NVI03516.jpg",
-    "pre_wedding_photos/NVI03526.jpg"
+    "pre_wedding_photos/pi7_reduced/NVI03503.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03507.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03516.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03526.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03538.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03604.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03608.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03627.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03676.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03709.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03717.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03727.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03767.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03780.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03790.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03826.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03958.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03985.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04045.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04084.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04123.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04258.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04396.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04421.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04468.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04503.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04520.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04531.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04592.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04596.jpg",
   ];
 
   const slideshowImage = document.getElementById("slideshow-image");
   const prevButton = document.getElementById("prev-button");
   const nextButton = document.getElementById("next-button");
+  const goBackButton = document.getElementById("go_back")
   let currentIndex = 0;
 
   function updateSlideshow() {
@@ -88,6 +155,27 @@
 
   // Optional: Auto-play
 //   setInterval(nextSlide, 2_000); // Change slide every 3 seconds
+  
+  const slideshowContainer = document.getElementById("slideshow-container");
+
+
+
+let isFullscreen = false;
+
+  function toggleFullscreen() {
+    if (isFullscreen) {
+      slideshowContainer.classList.remove("fullscreen");
+      goBackButton.classList.remove("fullscreen");
+
+      isFullscreen = false;
+    } else {
+      slideshowContainer.classList.add("fullscreen");
+      goBackButton.classList.add("fullscreen");
+      isFullscreen = true;
+    }
+  }
+
+
 </script>
 
 </body>

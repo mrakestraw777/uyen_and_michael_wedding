@@ -46,6 +46,16 @@ h1{
 
 }
 
+p{
+    margin-top: -15px;
+    font-size: 1.5em;
+}
+p span{
+   
+    font-family: Pinyon;
+    
+}
+
 #registry{
     background-image: url(tkthao219-bubududu.gif);
     background-position: center;
@@ -61,7 +71,12 @@ h1{
     background-repeat: no-repeat;
     background-position: left, right;
     background-color: #b3b5b4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
+
 
 #rsvp h1{
     /* position: relative;

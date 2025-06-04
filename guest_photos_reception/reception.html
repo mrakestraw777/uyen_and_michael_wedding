@@ -5,25 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uyen and Michael Wedding Reception - Guest Photos!</title>
     <style>
-        body, html {
-            height: 100%;
-            width: 100%;
+        /* Make sure html and body are perfectly sized to the viewport */
+        html, body {
             margin: 0;
-            display: flex; /* Use flexbox for main body layout */
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Hide scrollbars on html/body */
+        }
+
+        body {
+            display: flex;
             justify-content: center;
-            /* Removed align-items: center; from body to allow header/footer */
-            font-family: Arial, sans-serif;
-            padding: 0; /* Remove body padding as elements will control their own spacing */
-            background-color: #e6ffe6; /* Light green background */
-            color: #336633; /* Darker green text for contrast */
             flex-direction: column; /* Stack header, slideshow, footer vertically */
             align-items: center; /* Center content horizontally */
+            font-family: Arial, sans-serif;
+            background-color: #e6ffe6; /* Light green background */
+            color: #336633; /* Darker green text for contrast */
         }
+        
+        /* Only apply this overflow rule when fullscreen is active on the body */
+        body.fullscreen-active {
+            overflow: hidden; /* Ensure no scrollbars when fullscreen */
+        }
+
         header {
             text-align: center;
-            margin-bottom: 20px; /* Reduced margin for more compact layout */
-            padding: 20px 0; /* Add some padding to header */
-            width: 100%; /* Make header span full width */
+            margin-bottom: 20px;
+            padding: 20px 0;
+            width: 100%;
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         h1 {
             color: #008000; /* Medium green heading */
@@ -33,28 +44,30 @@
             margin-bottom: 20px;
         }
 
-        /* Slideshow specific styling from the second file */
+        /* Slideshow specific styling */
         #slideshow-container {
-            margin: 10px; /* Reduced margin */
+            margin: 10px;
             display: flex;
             flex-grow: 1; /* Allow container to grow and take available space */
             justify-content: center;
             align-items: center;
             position: relative; /* Needed for absolute positioning of buttons */
-            width: 100%; /* Make container span full width */
+            width: 100%;
             max-width: 900px; /* Optional: constrain max width for large screens */
             height: calc(100vh - 180px); /* Adjust height based on header/footer */
+            transition: all 0.3s ease; /* Smooth transition for fullscreen */
         }
         #slideshow-image {
             max-width: 100%;
-            max-height: 100%; /* Fill the container */
-            object-fit: contain; /* Scale image to fit within container */
+            max-height: 100%;
+            object-fit: contain;
             display: block;
             align-self: center;
+            cursor: pointer; /* Indicate it's clickable for fullscreen */
         }
 
         a {
-            color: #007bff; /* Standard link color */
+            color: #007bff;
             text-decoration: none;
         }
         a:hover {
@@ -72,6 +85,8 @@
             cursor: pointer;
             font-size: 1.2em;
             z-index: 10;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
         #prev-button {
@@ -84,65 +99,77 @@
 
         #go_back {
             position: absolute;
-            top: 15px; /* Adjust as needed */
-            left: 15px; /* Adjust as needed */
-            z-index: 20; /* Ensure it's above other elements */
+            top: 15px;
+            left: 15px;
+            z-index: 20;
             background-color: rgba(255, 255, 255, 0.7);
             padding: 5px 10px;
             border-radius: 5px;
-            color: #008000; /* Green color for consistency */
+            color: #008000;
+            transition: opacity 0.3s ease;
         }
 
-        /* Fullscreen mode styling */
-        .fullscreen {
-            position: fixed; /* Use fixed for true fullscreen */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 9999; /* High z-index to cover everything */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 0;
+        /* Fullscreen mode styling - applied to body and container */
+        body.fullscreen-active header,
+        body.fullscreen-active footer,
+        body.fullscreen-active #go_back {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .fullscreen #slideshow-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        #go_back.fullscreen {
-            display: none; /* Hide go back button in fullscreen */
-        }
-
+        /* This is the critical fullscreen container style */
         #slideshow-container.fullscreen {
-            margin: 0;
-            padding: 0; /* No padding in fullscreen container */
+            position: fixed; /* Essential for true fullscreen overlay */
+            top: 0;          /* Stretch to top of viewport */
+            right: 0;        /* Stretch to right of viewport */
+            bottom: 0;       /* Stretch to bottom of viewport */
+            left: 0;         /* Stretch to left of viewport */
+            /* Removed width: 100vw; height: 100vh; in favor of top/right/bottom/left */
+            
+            background-color: black;
+            z-index: 9999; /* Ensure it's on top of everything */
+            margin: 0 !important; /* Force no margins in fullscreen */
+            padding: 0 !important; /* Force no padding in fullscreen */
+            border-radius: 0;
+            box-shadow: none;
+
+            /* Set positioning context for the absolutely positioned image */
+            position: relative; /* IMPORTANT for image centering */
+            /* Removed display:flex and its centering properties */
         }
 
-        footer {
-            text-align: center;
-            margin-top: 20px; /* Reduced margin */
-            padding-top: 10px;
-            border-top: 1px solid #ccffcc; /* Light green border */
-            color: #77aa77; /* Medium-light green footer text */
-            font-size: 0.8em;
-            width: 100%; /* Make footer span full width */
+        /* Image inside fullscreen container: centered using absolute positioning + transform */
+        #slideshow-container.fullscreen #slideshow-image {
+            position: absolute; /* Position relative to its parent (#slideshow-container) */
+            top: 50%;           /* Move top edge to 50% down */
+            left: 50%;          /* Move left edge to 50% across */
+            transform: translate(-50%, -50%); /* Shift back by half its own width/height to center */
+
+            max-width: 100%;   /* Maximize within container */
+            max-height: 100%;  /* Maximize within container */
+            object-fit: contain; /* Scale image to fit within container, maintaining aspect ratio */
+            display: block; /* Ensure it's a block-level element */
+            width: auto; /* Allow image to size naturally within max-width/height */
+            height: auto; /* Allow image to size naturally within max-width/height */
         }
+
+        #slideshow-container.fullscreen .slideshow-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            font-size: 2em;
+        }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Wedding Reception Guest Photos!</h1>
+        <h1>Uyen and Michael Wedding Reception Guest Photos!</h1>
         <p>Thank you for celebrating with us!</p>
     </header>
 
-    <a id="go_back" href="../photos.html">← GO BACK</a>
+    <a id="go_back" href="index.html">← GO BACK</a>
 
     <div id="slideshow-container">
         <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
@@ -152,81 +179,25 @@
 
 <script>
   const imagePaths = [
-    "UM-G-1.jpg",
-    "UM-G-2.jpg",
-    "UM-G-3.jpg",
-    "UM-G-4.jpg",
-    "UM-G-5.jpg",
-    "UM-G-6.jpg",
-    "UM-G-7.jpg",
-    "UM-G-8.jpg",
-    "UM-G-9.jpg",
-    "UM-G-10.jpg",
-    "UM-G-11.jpg",
-    "UM-G-12.jpg",
-    "UM-G-13.jpg",
-    "UM-G-14.jpg",
-    "UM-G-15.jpg",
-    "UM-G-16.jpg",
-    "UM-G-17.jpg",
-    "UM-G-18.jpg",
-    "UM-G-19.jpg",
-    "UM-G-20.jpg",
-    "UM-G-21.jpg",
-    "UM-G-22.jpg",
-    "UM-G-23.jpg",
-    "UM-G-24.jpg",
-    "UM-G-25.jpg",
-    "UM-G-26.jpg",
-    "UM-G-27.jpg",
-    "UM-G-28.jpg",
-    "UM-G-29.jpg",
-    "UM-G-30.jpg",
-    "UM-G-31.jpg",
-    "UM-G-32.jpg",
-    "UM-G-33.jpg",
-    "UM-G-34.jpg",
-    "UM-G-35.jpg",
-    "UM-G-36.jpg",
-    "UM-G-37.jpg",
-    "UM-G-38.jpg",
-    "UM-G-39.jpg",
-    "UM-G-40.jpg",
-    "UM-G-41.jpg",
-    "UM-G-42.jpg",
-    "UM-G-43.jpg",
-    "UM-G-44.jpg",
-    "UM-G-45.jpg",
-    "UM-G-46.jpg",
-    "UM-G-47.jpg",
-    "UM-G-48.jpg",
-    "UM-G-49.jpg",
-    "UM-G-50.jpg",
-    "UM-G-51.jpg",
-    "UM-G-52.jpg",
-    "UM-G-53.jpg",
-    "UM-G-54.jpg",
-    "UM-G-55.jpg",
-    "UM-G-56.jpg",
-    "UM-G-57.jpg",
-    "UM-G-58.jpg",
-    "UM-G-59.jpg",
-    "UM-G-60.jpg",
-    "UM-G-61.jpg",
-    "UM-G-62.jpg",
-    "UM-G-63.jpg",
-    "UM-G-64.jpg",
-    "UM-G-65.jpg",
-    "UM-G-66.jpg",
-    "UM-G-67.jpg",
-    "UM-G-68.jpg",
-    "UM-G-69.jpg"
+    "UM-G-1.jpg", "UM-G-2.jpg", "UM-G-3.jpg", "UM-G-4.jpg", "UM-G-5.jpg",
+    "UM-G-6.jpg", "UM-G-7.jpg", "UM-G-8.jpg", "UM-G-9.jpg", "UM-G-10.jpg",
+    "UM-G-11.jpg", "UM-G-12.jpg", "UM-G-13.jpg", "UM-G-14.jpg", "UM-G-15.jpg",
+    "UM-G-16.jpg", "UM-G-17.jpg", "UM-G-18.jpg", "UM-G-19.jpg", "UM-G-20.jpg",
+    "UM-G-21.jpg", "UM-G-22.jpg", "UM-G-23.jpg", "UM-G-24.jpg", "UM-G-25.jpg",
+    "UM-G-26.jpg", "UM-G-27.jpg", "UM-G-28.jpg", "UM-G-29.jpg", "UM-G-30.jpg",
+    "UM-G-31.jpg", "UM-G-32.jpg", "UM-G-33.jpg", "UM-G-34.jpg", "UM-G-35.jpg",
+    "UM-G-36.jpg", "UM-G-37.jpg", "UM-G-38.jpg", "UM-G-39.jpg", "UM-G-40.jpg",
+    "UM-G-41.jpg", "UM-G-42.jpg", "UM-G-43.jpg", "UM-G-44.jpg", "UM-G-45.jpg",
+    "UM-G-46.jpg", "UM-G-47.jpg", "UM-G-48.jpg", "UM-G-49.jpg", "UM-G-50.jpg",
+    "UM-G-51.jpg", "UM-G-52.jpg", "UM-G-53.jpg", "UM-G-54.jpg", "UM-G-55.jpg",
+    "UM-G-56.jpg", "UM-G-57.jpg", "UM-G-58.jpg", "UM-G-59.jpg", "UM-G-60.jpg",
+    "UM-G-61.jpg", "UM-G-62.jpg", "UM-G-63.jpg", "UM-G-64.jpg", "UM-G-65.jpg",
+    "UM-G-66.jpg", "UM-G-67.jpg", "UM-G-68.jpg", "UM-G-69.jpg"
   ];
 
   const slideshowImage = document.getElementById("slideshow-image");
   const prevButton = document.getElementById("prev-button");
   const nextButton = document.getElementById("next-button");
-  // Ensure goBackButton is selected
   const goBackButton = document.getElementById("go_back"); 
   let currentIndex = 0;
 
@@ -255,18 +226,16 @@
 
   function toggleFullscreen() {
     if (isFullscreen) {
+      // Exiting fullscreen
       slideshowContainer.classList.remove("fullscreen");
-      // Only remove if goBackButton exists to prevent errors
-      if (goBackButton) { 
-          goBackButton.classList.remove("fullscreen");
-      }
+      document.body.classList.remove("fullscreen-active");
+
       isFullscreen = false;
     } else {
+      // Entering fullscreen
       slideshowContainer.classList.add("fullscreen");
-      // Only add if goBackButton exists
-      if (goBackButton) { 
-          goBackButton.classList.add("fullscreen");
-      }
+      document.body.classList.add("fullscreen-active");
+      
       isFullscreen = true;
     }
   }

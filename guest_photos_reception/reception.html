@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uyen and Michael Wedding Reception - Guest Photos!</title>
+    <style>
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex; /* Use flexbox for main body layout */
+            justify-content: center;
+            /* Removed align-items: center; from body to allow header/footer */
+            font-family: Arial, sans-serif;
+            padding: 0; /* Remove body padding as elements will control their own spacing */
+            background-color: #e6ffe6; /* Light green background */
+            color: #336633; /* Darker green text for contrast */
+            flex-direction: column; /* Stack header, slideshow, footer vertically */
+            align-items: center; /* Center content horizontally */
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px; /* Reduced margin for more compact layout */
+            padding: 20px 0; /* Add some padding to header */
+            width: 100%; /* Make header span full width */
+        }
+        h1 {
+            color: #008000; /* Medium green heading */
+        }
+        p {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Slideshow specific styling from the second file */
+        #slideshow-container {
+            margin: 10px; /* Reduced margin */
+            display: flex;
+            flex-grow: 1; /* Allow container to grow and take available space */
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Needed for absolute positioning of buttons */
+            width: 100%; /* Make container span full width */
+            max-width: 900px; /* Optional: constrain max width for large screens */
+            height: calc(100vh - 180px); /* Adjust height based on header/footer */
+        }
+        #slideshow-image {
+            max-width: 100%;
+            max-height: 100%; /* Fill the container */
+            object-fit: contain; /* Scale image to fit within container */
+            display: block;
+            align-self: center;
+        }
+
+        a {
+            color: #007bff; /* Standard link color */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .slideshow-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 50px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 10;
+        }
+
+        #prev-button {
+            left: 5px;
+        }
+
+        #next-button {
+            right: 5px;
+        }
+
+        #go_back {
+            position: absolute;
+            top: 15px; /* Adjust as needed */
+            left: 15px; /* Adjust as needed */
+            z-index: 20; /* Ensure it's above other elements */
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #008000; /* Green color for consistency */
+        }
+
+        /* Fullscreen mode styling */
+        .fullscreen {
+            position: fixed; /* Use fixed for true fullscreen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 9999; /* High z-index to cover everything */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .fullscreen #slideshow-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #go_back.fullscreen {
+            display: none; /* Hide go back button in fullscreen */
+        }
+
+        #slideshow-container.fullscreen {
+            margin: 0;
+            padding: 0; /* No padding in fullscreen container */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px; /* Reduced margin */
+            padding-top: 10px;
+            border-top: 1px solid #ccffcc; /* Light green border */
+            color: #77aa77; /* Medium-light green footer text */
+            font-size: 0.8em;
+            width: 100%; /* Make footer span full width */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Wedding Reception Guest Photos!</h1>
+        <p>Thank you for celebrating with us!</p>
+    </header>
+
+    <a id="go_back" href="../photos.html">← GO BACK</a>
+
+    <div id="slideshow-container">
+        <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
+        <button id="prev-button" class="slideshow-button">&lt;</button>
+        <button id="next-button" class="slideshow-button">&gt;</button>
+    </div>
+
+<script>
+  const imagePaths = [
+    "UM-G-1.jpg",
+    "UM-G-2.jpg",
+    "UM-G-3.jpg",
+    "UM-G-4.jpg",
+    "UM-G-5.jpg",
+    "UM-G-6.jpg",
+    "UM-G-7.jpg",
+    "UM-G-8.jpg",
+    "UM-G-9.jpg",
+    "UM-G-10.jpg",
+    "UM-G-11.jpg",
+    "UM-G-12.jpg",
+    "UM-G-13.jpg",
+    "UM-G-14.jpg",
+    "UM-G-15.jpg",
+    "UM-G-16.jpg",
+    "UM-G-17.jpg",
+    "UM-G-18.jpg",
+    "UM-G-19.jpg",
+    "UM-G-20.jpg",
+    "UM-G-21.jpg",
+    "UM-G-22.jpg",
+    "UM-G-23.jpg",
+    "UM-G-24.jpg",
+    "UM-G-25.jpg",
+    "UM-G-26.jpg",
+    "UM-G-27.jpg",
+    "UM-G-28.jpg",
+    "UM-G-29.jpg",
+    "UM-G-30.jpg",
+    "UM-G-31.jpg",
+    "UM-G-32.jpg",
+    "UM-G-33.jpg",
+    "UM-G-34.jpg",
+    "UM-G-35.jpg",
+    "UM-G-36.jpg",
+    "UM-G-37.jpg",
+    "UM-G-38.jpg",
+    "UM-G-39.jpg",
+    "UM-G-40.jpg",
+    "UM-G-41.jpg",
+    "UM-G-42.jpg",
+    "UM-G-43.jpg",
+    "UM-G-44.jpg",
+    "UM-G-45.jpg",
+    "UM-G-46.jpg",
+    "UM-G-47.jpg",
+    "UM-G-48.jpg",
+    "UM-G-49.jpg",
+    "UM-G-50.jpg",
+    "UM-G-51.jpg",
+    "UM-G-52.jpg",
+    "UM-G-53.jpg",
+    "UM-G-54.jpg",
+    "UM-G-55.jpg",
+    "UM-G-56.jpg",
+    "UM-G-57.jpg",
+    "UM-G-58.jpg",
+    "UM-G-59.jpg",
+    "UM-G-60.jpg",
+    "UM-G-61.jpg",
+    "UM-G-62.jpg",
+    "UM-G-63.jpg",
+    "UM-G-64.jpg",
+    "UM-G-65.jpg",
+    "UM-G-66.jpg",
+    "UM-G-67.jpg",
+    "UM-G-68.jpg",
+    "UM-G-69.jpg"
+  ];
+
+  const slideshowImage = document.getElementById("slideshow-image");
+  const prevButton = document.getElementById("prev-button");
+  const nextButton = document.getElementById("next-button");
+  // Ensure goBackButton is selected
+  const goBackButton = document.getElementById("go_back"); 
+  let currentIndex = 0;
+
+  function updateSlideshow() {
+    slideshowImage.src = imagePaths[currentIndex];
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % imagePaths.length;
+    updateSlideshow();
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + imagePaths.length) % imagePaths.length;
+    updateSlideshow();
+  }
+
+  updateSlideshow(); // Initial display
+
+  nextButton.addEventListener("click", nextSlide);
+  prevButton.addEventListener("click", prevSlide);
+
+  const slideshowContainer = document.getElementById("slideshow-container");
+
+  let isFullscreen = false;
+
+  function toggleFullscreen() {
+    if (isFullscreen) {
+      slideshowContainer.classList.remove("fullscreen");
+      // Only remove if goBackButton exists to prevent errors
+      if (goBackButton) { 
+          goBackButton.classList.remove("fullscreen");
+      }
+      isFullscreen = false;
+    } else {
+      slideshowContainer.classList.add("fullscreen");
+      // Only add if goBackButton exists
+      if (goBackButton) { 
+          goBackButton.classList.add("fullscreen");
+      }
+      isFullscreen = true;
+    }
+  }
+</script>
+
+    <footer>
+        <p>&copy; 2025 Uyen & Michael. All Rights Reserved.</p>
+    </footer>
+    
+</body>
+</html>

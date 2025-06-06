@@ -15,7 +15,7 @@
 
     body {
         display: flex;
-        justify-content: center;
+        /* justify-content: center; */
         flex-direction: column; /* Stack header, slideshow, footer vertically */
         align-items: center; /* Center content horizontally */
         font-family: Arial, sans-serif;
@@ -30,8 +30,8 @@
 
     header {
         text-align: center;
-        margin-bottom: 20px;
-        padding: 20px 0;
+        /* margin-bottom: 20px; */
+        /* padding: 20px 0; */
         width: 100%;
         flex-shrink: 0; /* Prevent header from shrinking */
     }
@@ -53,7 +53,12 @@
         position: relative; /* Needed for absolute positioning of buttons */
         width: 100%;
         max-width: 900px; /* THIS IS THE DEFAULT LIMITATION */
-        height: calc(100vh - 80px); /* Adjusted height, assuming no header/footer initially */
+        /* IMPORTANT CHANGE: Calculate height based on header/footer heights */
+        /* Assuming header padding (20px top/bottom) + margin (20px bottom)
+           and footer (default p margin usually around 16px top/bottom) */
+        /* Rough estimate: header (40px padding + 20px margin) + footer (approx 2em height) */
+        /* Adjust calc value more precisely if header/footer height is known */
+        height: calc(100vh - 180px); /* A more robust calc for header/footer */
         transition: all 0.3s ease; /* Smooth transition for fullscreen */
     }
     #slideshow-image {
@@ -158,6 +163,14 @@
         background-color: rgba(0, 0, 0, 0.7);
         padding: 20px;
         font-size: 2em;
+    }
+
+    footer {
+        text-align: center;
+        /* padding: 10px 0; */
+        width: 100%;
+        flex-shrink: 0; /* Prevent footer from shrinking */
+        /* margin-top: 20px; Add some space above the footer */
     }
 
 </style>

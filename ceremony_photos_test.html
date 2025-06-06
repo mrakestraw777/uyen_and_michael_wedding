@@ -15,7 +15,6 @@
 
     body {
         display: flex;
-        justify-content: center;
         flex-direction: column; /* Stack header, slideshow, footer vertically */
         align-items: center; /* Center content horizontally */
         font-family: Arial, sans-serif;
@@ -30,10 +29,11 @@
 
     header {
         text-align: center;
-        margin-bottom: 20px;
-        padding: 20px 0;
         width: 100%;
         flex-shrink: 0; /* Prevent header from shrinking */
+        /* Restore some padding/margin for visual separation */
+        padding: 20px 0;
+        margin-bottom: 20px;
     }
     h1 {
         color: #008000; /* Medium green heading */
@@ -53,7 +53,9 @@
         position: relative; /* Needed for absolute positioning of buttons */
         width: 100%;
         max-width: 900px; /* THIS IS THE DEFAULT LIMITATION */
-        height: calc(100vh - 80px); /* Adjusted height, assuming no header/footer initially */
+        /* IMPORTANT CHANGE: Calculate height based on header/footer heights */
+        /* A more robust calc for header/footer and margins/paddings */
+        height: calc(100vh - 180px);
         transition: all 0.3s ease; /* Smooth transition for fullscreen */
     }
     #slideshow-image {
@@ -96,11 +98,12 @@
         right: 5px;
     }
 
+    /* Default (Desktop) positioning for go_back */
     #go_back {
         position: absolute;
         top: 15px;
         left: 15px;
-        z-index: 20;
+        z-index: 20; /* High enough for desktop */
         background-color: rgba(255, 255, 255, 0.7);
         padding: 5px 10px;
         border-radius: 5px;
@@ -160,12 +163,56 @@
         font-size: 2em;
     }
 
+    footer {
+        text-align: center;
+        width: 100%;
+        flex-shrink: 0; /* Prevent footer from shrinking */
+        /* Restore some padding/margin for visual separation */
+        padding: 10px 0;
+        margin-top: 20px;
+    }
+
+    /* --- MOBILE-SPECIFIC STYLES (Apply only on screens 768px or narrower) --- */
+    @media (max-width: 768px) {
+        body {
+            /* Add padding to the top of the body to make space for the fixed back button */
+            padding-top: 50px; /* Adjust this value to match the height of your back button */
+            /* Remove justify-content: center to allow content to start from padding-top */
+            justify-content: flex-start;
+        }
+
+        #go_back {
+            position: fixed; /* Keep it fixed at the top of the viewport */
+            top: 0;
+            left: 0;
+            width: 100%; /* Make it full width on mobile for easier tapping */
+            text-align: left; /* Align text to the left */
+            padding: 10px 15px; /* Adjust padding for mobile button aesthetics */
+            box-sizing: border-box; /* Include padding in the width calculation */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
+            z-index: 1000; /* Ensure it's on top of everything else on mobile */
+            border-bottom: 1px solid #ccc; /* Add a subtle line at the bottom */
+        }
+
+        header {
+            margin-top: 0; /* Remove any top margin if body padding is taking care of spacing */
+            padding-top: 0; /* Remove header's top padding if go_back is above it */
+        }
+
+        /* Adjust slideshow container height for mobile if needed,
+           accounting for the fixed back button */
+        #slideshow-container {
+            height: calc(100vh - 120px); /* Re-calculate for mobile if needed,
+                                          considering header and fixed back button height */
+        }
+    }
+
 </style>
 </head>
 <body>
     <header>
-        <h1>Wedding Ceremony Photos</h1>
-        <p>Relive the beautiful moments from our wedding ceremony!</p>
+        <h1>Pre-Wedding Photos</h1>
+        <p>A collection of our pre-wedding moments!</p>
     </header>
 
     <a id="go_back" href="photos.html">← GO BACK</a>
@@ -182,47 +229,37 @@
 
 <script>
   const imagePaths = [
-"wedding_ceremony/IMG_2403.jpg", "wedding_ceremony/IMG_2427.jpg", "wedding_ceremony/IMG_2428.jpg",
-"wedding_ceremony/IMG_2442.jpg", "wedding_ceremony/IMG_2457.jpg", "wedding_ceremony/IMG_2478.jpg",
-"wedding_ceremony/IMG_2484.jpg", "wedding_ceremony/IMG_2488.jpg", "wedding_ceremony/IMG_2493.jpg",
-"wedding_ceremony/IMG_2527.jpg", "wedding_ceremony/IMG_2528.jpg", "wedding_ceremony/IMG_2535.jpg",
-"wedding_ceremony/IMG_2546.jpg", "wedding_ceremony/IMG_2553.jpg", "wedding_ceremony/IMG_2562.jpg",
-"wedding_ceremony/IMG_2575.jpg", "wedding_ceremony/IMG_2582.jpg", "wedding_ceremony/IMG_2592.jpg",
-"wedding_ceremony/IMG_2598.jpg", "wedding_ceremony/IMG_2606.jpg", "wedding_ceremony/IMG_2608.jpg",
-"wedding_ceremony/IMG_2639.jpg", "wedding_ceremony/IMG_2643.jpg", "wedding_ceremony/IMG_2644.jpg",
-"wedding_ceremony/IMG_2646.jpg", "wedding_ceremony/IMG_2649.jpg", "wedding_ceremony/IMG_2654.jpg",
-"wedding_ceremony/IMG_2657.jpg", "wedding_ceremony/IMG_2674.jpg", "wedding_ceremony/IMG_2680.jpg",
-"wedding_ceremony/IMG_2682.jpg", "wedding_ceremony/IMG_2691.jpg", "wedding_ceremony/IMG_2698.jpg",
-"wedding_ceremony/IMG_2702.jpg", "wedding_ceremony/IMG_2727.jpg", "wedding_ceremony/IMG_2735.jpg",
-"wedding_ceremony/IMG_2736.jpg", "wedding_ceremony/IMG_2741.jpg", "wedding_ceremony/IMG_2757.jpg",
-"wedding_ceremony/IMG_2767.jpg", "wedding_ceremony/IMG_2777.jpg", "wedding_ceremony/IMG_2799.jpg",
-"wedding_ceremony/IMG_2805.jpg", "wedding_ceremony/IMG_2820.jpg", "wedding_ceremony/IMG_2833.jpg",
-"wedding_ceremony/IMG_2845.jpg", "wedding_ceremony/IMG_2847.jpg", "wedding_ceremony/IMG_2848.jpg",
-"wedding_ceremony/IMG_2857.jpg", "wedding_ceremony/IMG_2880.jpg", "wedding_ceremony/IMG_2888.jpg",
-"wedding_ceremony/IMG_2892.jpg", "wedding_ceremony/IMG_2897.jpg", "wedding_ceremony/IMG_2902.jpg",
-"wedding_ceremony/IMG_2907.jpg", "wedding_ceremony/IMG_2925.jpg", "wedding_ceremony/IMG_2933.jpg",
-"wedding_ceremony/IMG_2948.jpg", "wedding_ceremony/IMG_2967.jpg", "wedding_ceremony/IMG_2971.jpg",
-"wedding_ceremony/IMG_3002.jpg", "wedding_ceremony/IMG_3006.jpg", "wedding_ceremony/IMG_3011.jpg",
-"wedding_ceremony/IMG_3032.jpg", "wedding_ceremony/IMG_3051.jpg", "wedding_ceremony/IMG_3056.jpg",
-"wedding_ceremony/IMG_3084.jpg", "wedding_ceremony/IMG_3092.jpg", "wedding_ceremony/IMG_3100.jpg",
-"wedding_ceremony/IMG_3107.jpg", "wedding_ceremony/IMG_3111.jpg", "wedding_ceremony/IMG_3112.jpg",
-"wedding_ceremony/IMG_3136.jpg", "wedding_ceremony/IMG_3145.jpg", "wedding_ceremony/IMG_3152.jpg",
-"wedding_ceremony/IMG_3162.jpg", "wedding_ceremony/IMG_3170.jpg", "wedding_ceremony/IMG_3174.jpg",
-"wedding_ceremony/IMG_3177.jpg", "wedding_ceremony/IMG_3178.jpg", "wedding_ceremony/IMG_3181.jpg",
-"wedding_ceremony/IMG_3189.jpg", "wedding_ceremony/IMG_3191.jpg", "wedding_ceremony/IMG_3199.jpg",
-"wedding_ceremony/IMG_3200.jpg", "wedding_ceremony/IMG_3205.jpg", "wedding_ceremony/IMG_3210.jpg",
-"wedding_ceremony/IMG_3220.jpg", "wedding_ceremony/IMG_3228.jpg", "wedding_ceremony/IMG_3231.jpg",
-"wedding_ceremony/IMG_3235.jpg", "wedding_ceremony/IMG_3242.jpg", "wedding_ceremony/IMG_3243.jpg",
-"wedding_ceremony/IMG_3248.jpg", "wedding_ceremony/IMG_3252.jpg", "wedding_ceremony/IMG_3255.jpg",
-"wedding_ceremony/IMG_3262.jpg", "wedding_ceremony/IMG_3265.jpg", "wedding_ceremony/IMG_3266.jpg",
-"wedding_ceremony/IMG_3274.jpg", "wedding_ceremony/IMG_3281.jpg", "wedding_ceremony/IMG_3289.jpg",
-"wedding_ceremony/IMG_3295.jpg", "wedding_ceremony/IMG_3298.jpg", "wedding_ceremony/IMG_3303.jpg",
-"wedding_ceremony/IMG_3308.jpg", "wedding_ceremony/IMG_3320.jpg", "wedding_ceremony/IMG_3331.jpg",
-"wedding_ceremony/IMG_3373.jpg", "wedding_ceremony/IMG_3383.jpg", "wedding_ceremony/IMG_3395.jpg",
-"wedding_ceremony/IMG_3431.jpg", "wedding_ceremony/IMG_3470.jpg", "wedding_ceremony/IMG_3481.jpg",
-"wedding_ceremony/IMG_3521.jpg", "wedding_ceremony/IMG_3525.jpg", "wedding_ceremony/IMG_3541.jpg",
-"wedding_ceremony/IMG_3543.jpg"
-];
+    "pre_wedding_photos/pi7_reduced/NVI03503.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03507.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03516.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03526.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03538.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03604.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03608.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03627.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03676.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03709.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03717.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03727.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03767.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03780.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03790.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03826.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03958.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI03985.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04045.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04084.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04123.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04258.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04396.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04421.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04468.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04503.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04520.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04531.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04592.jpg",
+    "pre_wedding_photos/pi7_reduced/NVI04596.jpg",
+  ];
 
   const slideshowImage = document.getElementById("slideshow-image");
   const prevButton = document.getElementById("prev-button");

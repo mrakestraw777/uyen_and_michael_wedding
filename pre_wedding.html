@@ -4,104 +4,228 @@
 <title>Mobile Slideshow</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body, html{
-        height:100%;
-        width: 100%;
+    /* Make sure html and body are perfectly sized to the viewport */
+    html, body {
         margin: 0;
-        display: flex;
-        justify-content: center;
-        /* align-items: center; */
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* Hide scrollbars on html/body */
     }
-    #slideshow-container{
+
+    body {
+        display: flex;
+        flex-direction: column; /* Stack header, slideshow, footer vertically */
+        align-items: center; /* Center content horizontally */
+        font-family: Arial, sans-serif;
+        background-color: #e6ffe6; /* Light green background */
+        color: #336633; /* Darker green text for contrast */
+    }
+
+    /* Only apply this overflow rule when fullscreen is active on the body */
+    body.fullscreen-active {
+        overflow: hidden; /* Ensure no scrollbars when fullscreen */
+    }
+
+    header {
+        text-align: center;
+        width: 100%;
+        flex-shrink: 0; /* Prevent header from shrinking */
+        /* Restore some padding/margin for visual separation */
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+    h1 {
+        color: #008000; /* Medium green heading */
+    }
+    p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Slideshow specific styling */
+    #slideshow-container {
         margin: 10px;
         display: flex;
-    }
-    #slideshow-image {
-    width: 100%;
-    height: 100%; /* Fill the container */
-    object-fit: contain; /* Scale image to fit within container */
-    display: block;
-    align-self: center;
-  }
-
-  a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-  .slideshow-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 50px 15px;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2em;
-    z-index: 10;
-  }
-
-  #prev-button {
-    left: 5px;
-  }
-
-  #next-button {
-    right: 5px;
-  }
-
-  #go_back{
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    /* z-index: -1; */
-  }
-
-    .fullscreen {
-        /* position: fixed; */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index: 1;
-        display: flex;
+        flex-grow: 1; /* Allow container to grow and take available space */
         justify-content: center;
         align-items: center;
-        margin: 0;
-    }
-
-    .fullscreen #slideshow-image {
+        position: relative; /* Needed for absolute positioning of buttons */
         width: 100%;
-        height: 100%;
+        max-width: 900px; /* THIS IS THE DEFAULT LIMITATION */
+        /* IMPORTANT CHANGE: Calculate height based on header/footer heights */
+        /* A more robust calc for header/footer and margins/paddings */
+        height: calc(100vh - 180px);
+        transition: all 0.3s ease; /* Smooth transition for fullscreen */
+    }
+    #slideshow-image {
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
+        display: block;
+        align-self: center;
+        cursor: pointer; /* Indicate it's clickable for fullscreen */
     }
 
-  
-
-    #go_back.fullscreen  {
-      display: none;
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
     }
 
-    #slideshow-container.fullscreen{
-      margin: 0;
-      padding: 5px;
+    .slideshow-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 50px 15px;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
     }
-  
+
+    #prev-button {
+        left: 5px;
+    }
+
+    #next-button {
+        right: 5px;
+    }
+
+    /* Default (Desktop) positioning for go_back */
+    #go_back {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 20; /* High enough for desktop */
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: #008000;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Fullscreen mode styling - applied to body and container */
+    body.fullscreen-active header,
+    body.fullscreen-active footer,
+    body.fullscreen-active #go_back {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* This is the critical fullscreen container style */
+    #slideshow-container.fullscreen {
+        position: fixed; /* Essential for true fullscreen overlay */
+        top: 0;          /* Stretch to top of viewport */
+        right: 0;        /* Stretch to right of viewport */
+        bottom: 0;       /* Stretch to bottom of viewport */
+        left: 0;         /* Stretch to left of viewport */
+
+        background-color: black;
+        z-index: 9999; /* Ensure it's on top of everything */
+        margin: 0 !important; /* Force no margins in fullscreen */
+        padding: 0 !important; /* Force no padding in fullscreen */
+        border-radius: 0;
+        box-shadow: none;
+
+        /* Override max-width so it can go truly fullscreen */
+        max-width: none;
+
+        /* Set positioning context for the absolutely positioned image */
+        position: relative;
+    }
+
+    /* Image inside fullscreen container: centered using absolute positioning + transform */
+    #slideshow-container.fullscreen #slideshow-image {
+        position: absolute; /* Position relative to its parent (#slideshow-container) */
+        top: 50%;           /* Move top edge to 50% down */
+        left: 50%;          /* Move left edge to 50% across */
+        transform: translate(-50%, -50%); /* Shift back by half its own width/height to center */
+
+        max-width: 100%;   /* Maximize within container */
+        max-height: 100%;  /* Maximize within container */
+        object-fit: contain; /* Scale image to fit within container, maintaining aspect ratio */
+        display: block; /* Ensure it's a block-level element */
+        width: auto; /* Allow image to size naturally within max-width/height */
+        height: auto; /* Allow image to size naturally within max-width/height */
+    }
+
+    #slideshow-container.fullscreen .slideshow-button {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        font-size: 2em;
+    }
+
+    footer {
+        text-align: center;
+        width: 100%;
+        flex-shrink: 0; /* Prevent footer from shrinking */
+        /* Restore some padding/margin for visual separation */
+        padding: 10px 0;
+        margin-top: 20px;
+    }
+
+    /* --- MOBILE-SPECIFIC STYLES (Apply only on screens 768px or narrower) --- */
+    @media (max-width: 768px) {
+        body {
+            /* Add padding to the top of the body to make space for the fixed back button */
+            padding-top: 50px; /* Adjust this value to match the height of your back button */
+            /* Remove justify-content: center to allow content to start from padding-top */
+            justify-content: flex-start;
+        }
+
+        #go_back {
+            position: fixed; /* Keep it fixed at the top of the viewport */
+            top: 0;
+            left: 0;
+            width: 100%; /* Make it full width on mobile for easier tapping */
+            text-align: left; /* Align text to the left */
+            padding: 10px 15px; /* Adjust padding for mobile button aesthetics */
+            box-sizing: border-box; /* Include padding in the width calculation */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
+            z-index: 1000; /* Ensure it's on top of everything else on mobile */
+            border-bottom: 1px solid #ccc; /* Add a subtle line at the bottom */
+        }
+
+        header {
+            margin-top: 0; /* Remove any top margin if body padding is taking care of spacing */
+            padding-top: 0; /* Remove header's top padding if go_back is above it */
+        }
+
+        /* Adjust slideshow container height for mobile if needed,
+           accounting for the fixed back button */
+        #slideshow-container {
+            height: calc(100vh - 120px); /* Re-calculate for mobile if needed,
+                                          considering header and fixed back button height */
+        }
+    }
+
 </style>
 </head>
 <body>
-  <a id="go_back" href="photos.html">← GO BACK</a>
+    <header>
+        <h1>Pre-Wedding Photos</h1>
+        <p>A collection of our pre-wedding moments!</p>
+    </header>
 
-<div id="slideshow-container">
-  <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
-  <button id="prev-button" class="slideshow-button">&lt;</button>
-  <button id="next-button" class="slideshow-button">&gt;</button>
-</div>
+    <a id="go_back" href="photos.html">← GO BACK</a>
+
+    <div id="slideshow-container">
+        <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
+        <button id="prev-button" class="slideshow-button">&lt;</button>
+        <button id="next-button" class="slideshow-button">&gt;</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Our Wedding. All Rights Reserved.</p>
+    </footer>
 
 <script>
   const imagePaths = [
@@ -140,8 +264,10 @@ a:hover {
   const slideshowImage = document.getElementById("slideshow-image");
   const prevButton = document.getElementById("prev-button");
   const nextButton = document.getElementById("next-button");
-  const goBackButton = document.getElementById("go_back")
+  const goBackButton = document.getElementById("go_back");
+  const slideshowContainer = document.getElementById("slideshow-container");
   let currentIndex = 0;
+  let isFullscreen = false;
 
   function updateSlideshow() {
     slideshowImage.src = imagePaths[currentIndex];
@@ -162,28 +288,26 @@ a:hover {
   nextButton.addEventListener("click", nextSlide);
   prevButton.addEventListener("click", prevSlide);
 
-  // Optional: Auto-play
-//   setInterval(nextSlide, 2_000); // Change slide every 3 seconds
-  
-  const slideshowContainer = document.getElementById("slideshow-container");
-
-
-
-let isFullscreen = false;
-
   function toggleFullscreen() {
     if (isFullscreen) {
+      // Exiting fullscreen
       slideshowContainer.classList.remove("fullscreen");
-      goBackButton.classList.remove("fullscreen");
-
+      document.body.classList.remove("fullscreen-active"); // Apply to body
       isFullscreen = false;
     } else {
+      // Entering fullscreen
       slideshowContainer.classList.add("fullscreen");
-      goBackButton.classList.add("fullscreen");
+      document.body.classList.add("fullscreen-active"); // Apply to body
       isFullscreen = true;
     }
   }
 
+  // Event listener for exiting fullscreen with Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isFullscreen) {
+      toggleFullscreen();
+    }
+  });
 
 </script>
 

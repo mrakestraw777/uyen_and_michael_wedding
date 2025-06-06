@@ -4,233 +4,233 @@
 <title>Mobile Slideshow</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body, html{
-        height:100%;
-        width: 100%;
+    /* Make sure html and body are perfectly sized to the viewport */
+    html, body {
         margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* Hide scrollbars on html/body */
+    }
+
+    body {
         display: flex;
         justify-content: center;
-        /* align-items: center; */
+        flex-direction: column; /* Stack header, slideshow, footer vertically */
+        align-items: center; /* Center content horizontally */
+        font-family: Arial, sans-serif;
+        background-color: #e6ffe6; /* Light green background */
+        color: #336633; /* Darker green text for contrast */
     }
-    #slideshow-container{
+
+    /* Only apply this overflow rule when fullscreen is active on the body */
+    body.fullscreen-active {
+        overflow: hidden; /* Ensure no scrollbars when fullscreen */
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 20px 0;
+        width: 100%;
+        flex-shrink: 0; /* Prevent header from shrinking */
+    }
+    h1 {
+        color: #008000; /* Medium green heading */
+    }
+    p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Slideshow specific styling */
+    #slideshow-container {
         margin: 10px;
         display: flex;
-    }
-    #slideshow-image {
-    width: 100%;
-    height: 100%; /* Fill the container */
-    object-fit: contain; /* Scale image to fit within container */
-    display: block;
-    align-self: center;
-  }
-
-  a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-  .slideshow-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 50px 15px;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2em;
-    z-index: 10;
-  }
-
-  #prev-button {
-    left: 5px;
-  }
-
-  #next-button {
-    right: 5px;
-  }
-
-  #go_back{
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    /* z-index: -1; */
-  }
-
-    .fullscreen {
-        /* position: fixed; */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index: 1;
-        display: flex;
+        flex-grow: 1; /* Allow container to grow and take available space */
         justify-content: center;
         align-items: center;
-        margin: 0;
-    }
-
-    .fullscreen #slideshow-image {
+        position: relative; /* Needed for absolute positioning of buttons */
         width: 100%;
-        height: 100%;
+        max-width: 900px; /* THIS IS THE DEFAULT LIMITATION */
+        height: calc(100vh - 80px); /* Adjusted height, assuming no header/footer initially */
+        transition: all 0.3s ease; /* Smooth transition for fullscreen */
+    }
+    #slideshow-image {
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
+        display: block;
+        align-self: center;
+        cursor: pointer; /* Indicate it's clickable for fullscreen */
     }
 
-  
-
-    #go_back.fullscreen  {
-      display: none;
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
     }
 
-    #slideshow-container.fullscreen{
-      margin: 0;
-      padding: 5px;
+    .slideshow-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 50px 15px;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
     }
-  
+
+    #prev-button {
+        left: 5px;
+    }
+
+    #next-button {
+        right: 5px;
+    }
+
+    #go_back {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 20;
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: #008000;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Fullscreen mode styling - applied to body and container */
+    body.fullscreen-active header,
+    body.fullscreen-active footer,
+    body.fullscreen-active #go_back {
+        display: none;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* This is the critical fullscreen container style */
+    #slideshow-container.fullscreen {
+        position: fixed; /* Essential for true fullscreen overlay */
+        top: 0;          /* Stretch to top of viewport */
+        right: 0;        /* Stretch to right of viewport */
+        bottom: 0;       /* Stretch to bottom of viewport */
+        left: 0;         /* Stretch to left of viewport */
+
+        background-color: black;
+        z-index: 9999; /* Ensure it's on top of everything */
+        margin: 0 !important; /* Force no margins in fullscreen */
+        padding: 0 !important; /* Force no padding in fullscreen */
+        border-radius: 0;
+        box-shadow: none;
+
+        /* Override max-width so it can go truly fullscreen */
+        max-width: none;
+
+        /* Set positioning context for the absolutely positioned image */
+        position: relative;
+    }
+
+    /* Image inside fullscreen container: centered using absolute positioning + transform */
+    #slideshow-container.fullscreen #slideshow-image {
+        position: absolute; /* Position relative to its parent (#slideshow-container) */
+        top: 50%;           /* Move top edge to 50% down */
+        left: 50%;          /* Move left edge to 50% across */
+        transform: translate(-50%, -50%); /* Shift back by half its own width/height to center */
+
+        max-width: 100%;   /* Maximize within container */
+        max-height: 100%;  /* Maximize within container */
+        object-fit: contain; /* Scale image to fit within container, maintaining aspect ratio */
+        display: block; /* Ensure it's a block-level element */
+        width: auto; /* Allow image to size naturally within max-width/height */
+        height: auto; /* Allow image to size naturally within max-width/height */
+    }
+
+    #slideshow-container.fullscreen .slideshow-button {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        font-size: 2em;
+    }
+
 </style>
 </head>
 <body>
-  <a id="go_back" href="photos.html">← GO BACK</a>
+    <header>
+        <h1>Wedding Ceremony Photos</h1>
+        <p>Relive the beautiful moments from our wedding ceremony!</p>
+    </header>
 
-<div id="slideshow-container">
-  <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
-  <button id="prev-button" class="slideshow-button">&lt;</button>
-  <button id="next-button" class="slideshow-button">&gt;</button>
-</div>
+    <a id="go_back" href="photos.html">← GO BACK</a>
+
+    <div id="slideshow-container">
+        <img id="slideshow-image" onclick="toggleFullscreen()" src="" alt="Slideshow Image">
+        <button id="prev-button" class="slideshow-button">&lt;</button>
+        <button id="next-button" class="slideshow-button">&gt;</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Our Wedding. All Rights Reserved.</p>
+    </footer>
 
 <script>
   const imagePaths = [
-
-"wedding_ceremony/IMG_2403.jpg",
-"wedding_ceremony/IMG_2427.jpg",
-"wedding_ceremony/IMG_2428.jpg",
-"wedding_ceremony/IMG_2442.jpg",
-"wedding_ceremony/IMG_2457.jpg",
-"wedding_ceremony/IMG_2478.jpg",
-"wedding_ceremony/IMG_2484.jpg",
-"wedding_ceremony/IMG_2488.jpg",
-"wedding_ceremony/IMG_2493.jpg",
-"wedding_ceremony/IMG_2527.jpg",
-"wedding_ceremony/IMG_2528.jpg",
-"wedding_ceremony/IMG_2535.jpg",
-"wedding_ceremony/IMG_2546.jpg",
-"wedding_ceremony/IMG_2553.jpg",
-"wedding_ceremony/IMG_2562.jpg",
-"wedding_ceremony/IMG_2575.jpg",
-"wedding_ceremony/IMG_2582.jpg",
-"wedding_ceremony/IMG_2592.jpg",
-"wedding_ceremony/IMG_2598.jpg",
-"wedding_ceremony/IMG_2606.jpg",
-"wedding_ceremony/IMG_2608.jpg",
-"wedding_ceremony/IMG_2639.jpg",
-"wedding_ceremony/IMG_2643.jpg",
-"wedding_ceremony/IMG_2644.jpg",
-"wedding_ceremony/IMG_2646.jpg",
-"wedding_ceremony/IMG_2649.jpg",
-"wedding_ceremony/IMG_2654.jpg",
-"wedding_ceremony/IMG_2657.jpg",
-"wedding_ceremony/IMG_2674.jpg",
-"wedding_ceremony/IMG_2680.jpg",
-"wedding_ceremony/IMG_2682.jpg",
-"wedding_ceremony/IMG_2691.jpg",
-"wedding_ceremony/IMG_2698.jpg",
-"wedding_ceremony/IMG_2702.jpg",
-"wedding_ceremony/IMG_2727.jpg",
-"wedding_ceremony/IMG_2735.jpg",
-"wedding_ceremony/IMG_2736.jpg",
-"wedding_ceremony/IMG_2741.jpg",
-"wedding_ceremony/IMG_2757.jpg",
-"wedding_ceremony/IMG_2767.jpg",
-"wedding_ceremony/IMG_2777.jpg",
-"wedding_ceremony/IMG_2799.jpg",
-"wedding_ceremony/IMG_2805.jpg",
-"wedding_ceremony/IMG_2820.jpg",
-"wedding_ceremony/IMG_2833.jpg",
-"wedding_ceremony/IMG_2845.jpg",
-"wedding_ceremony/IMG_2847.jpg",
-"wedding_ceremony/IMG_2848.jpg",
-"wedding_ceremony/IMG_2857.jpg",
-"wedding_ceremony/IMG_2880.jpg",
-"wedding_ceremony/IMG_2888.jpg",
-"wedding_ceremony/IMG_2892.jpg",
-"wedding_ceremony/IMG_2897.jpg",
-"wedding_ceremony/IMG_2902.jpg",
-"wedding_ceremony/IMG_2907.jpg",
-"wedding_ceremony/IMG_2925.jpg",
-"wedding_ceremony/IMG_2933.jpg",
-"wedding_ceremony/IMG_2948.jpg",
-"wedding_ceremony/IMG_2967.jpg",
-"wedding_ceremony/IMG_2971.jpg",
-"wedding_ceremony/IMG_3002.jpg",
-"wedding_ceremony/IMG_3006.jpg",
-"wedding_ceremony/IMG_3032.jpg",
-"wedding_ceremony/IMG_3051.jpg",
-"wedding_ceremony/IMG_3056.jpg",
-"wedding_ceremony/IMG_3084.jpg",
-"wedding_ceremony/IMG_3092.jpg",
-"wedding_ceremony/IMG_3100.jpg",
-"wedding_ceremony/IMG_3107.jpg",
-"wedding_ceremony/IMG_3111.jpg",
-"wedding_ceremony/IMG_3112.jpg",
-"wedding_ceremony/IMG_3136.jpg",
-"wedding_ceremony/IMG_3145.jpg",
-"wedding_ceremony/IMG_3152.jpg",
-"wedding_ceremony/IMG_3162.jpg",
-"wedding_ceremony/IMG_3170.jpg",
-"wedding_ceremony/IMG_3174.jpg",
-"wedding_ceremony/IMG_3177.jpg",
-"wedding_ceremony/IMG_3178.jpg",
-"wedding_ceremony/IMG_3181.jpg",
-"wedding_ceremony/IMG_3189.jpg",
-"wedding_ceremony/IMG_3191.jpg",
-"wedding_ceremony/IMG_3199.jpg",
-"wedding_ceremony/IMG_3200.jpg",
-"wedding_ceremony/IMG_3205.jpg",
-"wedding_ceremony/IMG_3210.jpg",
-"wedding_ceremony/IMG_3220.jpg",
-"wedding_ceremony/IMG_3228.jpg",
-"wedding_ceremony/IMG_3231.jpg",
-"wedding_ceremony/IMG_3235.jpg",
-"wedding_ceremony/IMG_3242.jpg",
-"wedding_ceremony/IMG_3243.jpg",
-"wedding_ceremony/IMG_3248.jpg",
-"wedding_ceremony/IMG_3252.jpg",
-"wedding_ceremony/IMG_3255.jpg",
-"wedding_ceremony/IMG_3262.jpg",
-"wedding_ceremony/IMG_3265.jpg",
-"wedding_ceremony/IMG_3266.jpg",
-"wedding_ceremony/IMG_3274.jpg",
-"wedding_ceremony/IMG_3281.jpg",
-"wedding_ceremony/IMG_3289.jpg",
-"wedding_ceremony/IMG_3295.jpg",
-"wedding_ceremony/IMG_3298.jpg",
-"wedding_ceremony/IMG_3303.jpg",
-"wedding_ceremony/IMG_3308.jpg",
-"wedding_ceremony/IMG_3320.jpg",
-"wedding_ceremony/IMG_3331.jpg",
-"wedding_ceremony/IMG_3373.jpg",
-"wedding_ceremony/IMG_3383.jpg",
-"wedding_ceremony/IMG_3395.jpg",
-"wedding_ceremony/IMG_3431.jpg",
-"wedding_ceremony/IMG_3470.jpg",
-"wedding_ceremony/IMG_3481.jpg",
-"wedding_ceremony/IMG_3521.jpg",
-"wedding_ceremony/IMG_3525.jpg",
-"wedding_ceremony/IMG_3541.jpg",
+"wedding_ceremony/IMG_2403.jpg", "wedding_ceremony/IMG_2427.jpg", "wedding_ceremony/IMG_2428.jpg",
+"wedding_ceremony/IMG_2442.jpg", "wedding_ceremony/IMG_2457.jpg", "wedding_ceremony/IMG_2478.jpg",
+"wedding_ceremony/IMG_2484.jpg", "wedding_ceremony/IMG_2488.jpg", "wedding_ceremony/IMG_2493.jpg",
+"wedding_ceremony/IMG_2527.jpg", "wedding_ceremony/IMG_2528.jpg", "wedding_ceremony/IMG_2535.jpg",
+"wedding_ceremony/IMG_2546.jpg", "wedding_ceremony/IMG_2553.jpg", "wedding_ceremony/IMG_2562.jpg",
+"wedding_ceremony/IMG_2575.jpg", "wedding_ceremony/IMG_2582.jpg", "wedding_ceremony/IMG_2592.jpg",
+"wedding_ceremony/IMG_2598.jpg", "wedding_ceremony/IMG_2606.jpg", "wedding_ceremony/IMG_2608.jpg",
+"wedding_ceremony/IMG_2639.jpg", "wedding_ceremony/IMG_2643.jpg", "wedding_ceremony/IMG_2644.jpg",
+"wedding_ceremony/IMG_2646.jpg", "wedding_ceremony/IMG_2649.jpg", "wedding_ceremony/IMG_2654.jpg",
+"wedding_ceremony/IMG_2657.jpg", "wedding_ceremony/IMG_2674.jpg", "wedding_ceremony/IMG_2680.jpg",
+"wedding_ceremony/IMG_2682.jpg", "wedding_ceremony/IMG_2691.jpg", "wedding_ceremony/IMG_2698.jpg",
+"wedding_ceremony/IMG_2702.jpg", "wedding_ceremony/IMG_2727.jpg", "wedding_ceremony/IMG_2735.jpg",
+"wedding_ceremony/IMG_2736.jpg", "wedding_ceremony/IMG_2741.jpg", "wedding_ceremony/IMG_2757.jpg",
+"wedding_ceremony/IMG_2767.jpg", "wedding_ceremony/IMG_2777.jpg", "wedding_ceremony/IMG_2799.jpg",
+"wedding_ceremony/IMG_2805.jpg", "wedding_ceremony/IMG_2820.jpg", "wedding_ceremony/IMG_2833.jpg",
+"wedding_ceremony/IMG_2845.jpg", "wedding_ceremony/IMG_2847.jpg", "wedding_ceremony/IMG_2848.jpg",
+"wedding_ceremony/IMG_2857.jpg", "wedding_ceremony/IMG_2880.jpg", "wedding_ceremony/IMG_2888.jpg",
+"wedding_ceremony/IMG_2892.jpg", "wedding_ceremony/IMG_2897.jpg", "wedding_ceremony/IMG_2902.jpg",
+"wedding_ceremony/IMG_2907.jpg", "wedding_ceremony/IMG_2925.jpg", "wedding_ceremony/IMG_2933.jpg",
+"wedding_ceremony/IMG_2948.jpg", "wedding_ceremony/IMG_2967.jpg", "wedding_ceremony/IMG_2971.jpg",
+"wedding_ceremony/IMG_3002.jpg", "wedding_ceremony/IMG_3006.jpg", "wedding_ceremony/IMG_3011.jpg",
+"wedding_ceremony/IMG_3032.jpg", "wedding_ceremony/IMG_3051.jpg", "wedding_ceremony/IMG_3056.jpg",
+"wedding_ceremony/IMG_3084.jpg", "wedding_ceremony/IMG_3092.jpg", "wedding_ceremony/IMG_3100.jpg",
+"wedding_ceremony/IMG_3107.jpg", "wedding_ceremony/IMG_3111.jpg", "wedding_ceremony/IMG_3112.jpg",
+"wedding_ceremony/IMG_3136.jpg", "wedding_ceremony/IMG_3145.jpg", "wedding_ceremony/IMG_3152.jpg",
+"wedding_ceremony/IMG_3162.jpg", "wedding_ceremony/IMG_3170.jpg", "wedding_ceremony/IMG_3174.jpg",
+"wedding_ceremony/IMG_3177.jpg", "wedding_ceremony/IMG_3178.jpg", "wedding_ceremony/IMG_3181.jpg",
+"wedding_ceremony/IMG_3189.jpg", "wedding_ceremony/IMG_3191.jpg", "wedding_ceremony/IMG_3199.jpg",
+"wedding_ceremony/IMG_3200.jpg", "wedding_ceremony/IMG_3205.jpg", "wedding_ceremony/IMG_3210.jpg",
+"wedding_ceremony/IMG_3220.jpg", "wedding_ceremony/IMG_3228.jpg", "wedding_ceremony/IMG_3231.jpg",
+"wedding_ceremony/IMG_3235.jpg", "wedding_ceremony/IMG_3242.jpg", "wedding_ceremony/IMG_3243.jpg",
+"wedding_ceremony/IMG_3248.jpg", "wedding_ceremony/IMG_3252.jpg", "wedding_ceremony/IMG_3255.jpg",
+"wedding_ceremony/IMG_3262.jpg", "wedding_ceremony/IMG_3265.jpg", "wedding_ceremony/IMG_3266.jpg",
+"wedding_ceremony/IMG_3274.jpg", "wedding_ceremony/IMG_3281.jpg", "wedding_ceremony/IMG_3289.jpg",
+"wedding_ceremony/IMG_3295.jpg", "wedding_ceremony/IMG_3298.jpg", "wedding_ceremony/IMG_3303.jpg",
+"wedding_ceremony/IMG_3308.jpg", "wedding_ceremony/IMG_3320.jpg", "wedding_ceremony/IMG_3331.jpg",
+"wedding_ceremony/IMG_3373.jpg", "wedding_ceremony/IMG_3383.jpg", "wedding_ceremony/IMG_3395.jpg",
+"wedding_ceremony/IMG_3431.jpg", "wedding_ceremony/IMG_3470.jpg", "wedding_ceremony/IMG_3481.jpg",
+"wedding_ceremony/IMG_3521.jpg", "wedding_ceremony/IMG_3525.jpg", "wedding_ceremony/IMG_3541.jpg",
 "wedding_ceremony/IMG_3543.jpg"
-
 ];
 
   const slideshowImage = document.getElementById("slideshow-image");
   const prevButton = document.getElementById("prev-button");
   const nextButton = document.getElementById("next-button");
-  const goBackButton = document.getElementById("go_back")
+  const goBackButton = document.getElementById("go_back");
+  const slideshowContainer = document.getElementById("slideshow-container");
   let currentIndex = 0;
+  let isFullscreen = false;
 
   function updateSlideshow() {
     slideshowImage.src = imagePaths[currentIndex];
@@ -239,7 +239,6 @@ a:hover {
   function nextSlide() {
     currentIndex = (currentIndex + 1) % imagePaths.length;
     updateSlideshow();
-    console.log(`${currentIndex} is the current index.`)
   }
 
   function prevSlide() {
@@ -252,28 +251,26 @@ a:hover {
   nextButton.addEventListener("click", nextSlide);
   prevButton.addEventListener("click", prevSlide);
 
-  // Optional: Auto-play
-//   setInterval(nextSlide, 2_000); // Change slide every 3 seconds
-  
-  const slideshowContainer = document.getElementById("slideshow-container");
-
-
-
-let isFullscreen = false;
-
   function toggleFullscreen() {
     if (isFullscreen) {
+      // Exiting fullscreen
       slideshowContainer.classList.remove("fullscreen");
-      goBackButton.classList.remove("fullscreen");
-
+      document.body.classList.remove("fullscreen-active"); // Apply to body
       isFullscreen = false;
     } else {
+      // Entering fullscreen
       slideshowContainer.classList.add("fullscreen");
-      goBackButton.classList.add("fullscreen");
+      document.body.classList.add("fullscreen-active"); // Apply to body
       isFullscreen = true;
     }
   }
 
+  // Event listener for exiting fullscreen with Escape key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isFullscreen) {
+      toggleFullscreen();
+    }
+  });
 
 </script>
 
